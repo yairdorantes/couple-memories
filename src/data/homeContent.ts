@@ -1,11 +1,4 @@
-import {
-  Heart,
-  Home,
-  Images,
-  MapPin,
-  Sparkles,
-  UserRound,
-} from "lucide-react";
+import { Heart, Home, Images, MapPin, UserRound } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { TranslationKey } from "../i18n/translations";
 
@@ -125,6 +118,6 @@ export const navItems: NavItem[] = [
   { view: "memories", labelKey: "nav.memories", icon: Images },
   { view: "places", labelKey: "nav.places", icon: MapPin },
   // { view: "love", labelKey: "nav.love", icon: Heart },
-  { view: "recap", labelKey: "nav.recap", icon: Sparkles },
+  // { view: "recap", labelKey: "nav.recap", icon: Sparkles },
   { view: "profile", labelKey: "nav.profile", icon: UserRound },
 ];

@@ -4,7 +4,6 @@ import { FeaturedMemoryCard } from "./FeaturedMemoryCard";
 import { FloatingActionButton } from "./FloatingActionButton";
 import { FloatingHearts } from "./FloatingHearts";
 import { HeroCard } from "./HeroCard";
-import { LanguageSwitcher } from "./LanguageSwitcher";
 import { MemoryHighlights } from "./MemoryHighlights";
 import { TogetherCounter } from "./TogetherCounter";
 import {
@@ -50,8 +49,8 @@ export function HomePage({ activeView, onNavigate }: HomePageProps) {
             totalDays={duration.totalDays}
             language={language}
           />
-          <TogetherCounter duration={duration} />
           <FeaturedMemoryCard />
+          <TogetherCounter duration={duration} />
           <MemoryHighlights highlights={highlightCards} />
         </div>
       </div>

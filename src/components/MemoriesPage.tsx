@@ -16,7 +16,6 @@ import {
 import { useMemo, useState } from "react";
 import { BottomNavigation } from "./BottomNavigation";
 import { FloatingHearts } from "./FloatingHearts";
-import { LanguageSwitcher } from "./LanguageSwitcher";
 import { MemoryFormModal, type NewMemoryDraft } from "./MemoryFormModal";
 import {
   memoryCategories,
@@ -33,6 +32,11 @@ import { formatDateTime, type Language } from "../i18n/translations";
 type MemoriesPageProps = {
   activeView: AppView;
   onNavigate: (view: AppView) => void;
+};
+
+type CalendarRange = {
+  start: string;
+  end: string | null;
 };
 
 const viewIcons: Record<MemoryViewMode, typeof TrendingUp> = {
@@ -54,9 +58,11 @@ export function MemoriesPage({ activeView, onNavigate }: MemoriesPageProps) {
   const [isMemoryModalOpen, setIsMemoryModalOpen] = useState(false);
   const [editingMemory, setEditingMemory] = useState<MemoryEntry | null>(null);
   const [openActionMenuId, setOpenActionMenuId] = useState<string | null>(null);
-  const [selectedCalendarDate, setSelectedCalendarDate] = useState<
-    string | null
-  >(initialCalendarDateKey);
+  const [selectedCalendarRange, setSelectedCalendarRange] =
+    useState<CalendarRange | null>({
+      start: initialCalendarDateKey,
+      end: initialCalendarDateKey,
+    });
   const [visibleCalendarMonth, setVisibleCalendarMonth] = useState(() =>
     startOfMonth(parseDateKey(initialCalendarDateKey)),
   );
@@ -95,8 +101,19 @@ export function MemoriesPage({ activeView, onNavigate }: MemoriesPageProps) {
     [memoriesByDate, visibleCalendarMonth],
   );
 
-  const calendarMemories = selectedCalendarDate
-    ? (memoriesByDate.get(selectedCalendarDate) ?? [])
+  const calendarYears = useMemo(
+    () => buildCalendarYears(memories, visibleCalendarMonth),
+    [memories, visibleCalendarMonth],
+  );
+
+  const calendarMemories = selectedCalendarRange
+    ? filteredMemories.filter((memory) =>
+        isDateKeyInRange(
+          memory.dateTime.slice(0, 10),
+          selectedCalendarRange.start,
+          selectedCalendarRange.end ?? selectedCalendarRange.start,
+        ),
+      )
     : filteredMemories;
 
   function handleSaveMemory(draft: NewMemoryDraft) {
@@ -124,7 +141,10 @@ export function MemoriesPage({ activeView, onNavigate }: MemoriesPageProps) {
             : memory,
         ),
       );
-      setSelectedCalendarDate(draft.dateTime.slice(0, 10));
+      setSelectedCalendarRange({
+        start: draft.dateTime.slice(0, 10),
+        end: draft.dateTime.slice(0, 10),
+      });
       setVisibleCalendarMonth(startOfMonth(parseDateKey(draft.dateTime)));
       setEditingMemory(null);
       return;
@@ -139,7 +159,10 @@ export function MemoriesPage({ activeView, onNavigate }: MemoriesPageProps) {
       },
       ...currentMemories,
     ]);
-    setSelectedCalendarDate(draft.dateTime.slice(0, 10));
+    setSelectedCalendarRange({
+      start: draft.dateTime.slice(0, 10),
+      end: draft.dateTime.slice(0, 10),
+    });
     setVisibleCalendarMonth(startOfMonth(parseDateKey(draft.dateTime)));
   }
 
@@ -186,9 +209,37 @@ export function MemoriesPage({ activeView, onNavigate }: MemoriesPageProps) {
 
   function handleCalendarMonthChange(monthOffset: number) {
     setOpenActionMenuId(null);
-    setSelectedCalendarDate(null);
     setVisibleCalendarMonth((currentMonth) =>
       addMonths(currentMonth, monthOffset),
+    );
+  }
+
+  function handleCalendarMonthJump(monthIndex: number) {
+    setOpenActionMenuId(null);
+    setVisibleCalendarMonth(
+      (currentMonth) => new Date(currentMonth.getFullYear(), monthIndex, 1),
+    );
+  }
+
+  function handleCalendarYearJump(year: number) {
+    setOpenActionMenuId(null);
+    setVisibleCalendarMonth(
+      (currentMonth) => new Date(year, currentMonth.getMonth(), 1),
+    );
+  }
+
+  function handleCalendarDayClick(dateKey: string) {
+    setOpenActionMenuId(null);
+
+    if (!selectedCalendarRange || selectedCalendarRange.end) {
+      setSelectedCalendarRange({ start: dateKey, end: null });
+      return;
+    }
+
+    setSelectedCalendarRange(
+      dateKey < selectedCalendarRange.start
+        ? { start: dateKey, end: selectedCalendarRange.start }
+        : { start: selectedCalendarRange.start, end: dateKey },
     );
   }
 
@@ -471,6 +522,39 @@ export function MemoriesPage({ activeView, onNavigate }: MemoriesPageProps) {
                     </button>
                   </header>
 
+                  <div className='memories-calendar-jump'>
+                    <label>
+                      <span>{t("memories.calendar.monthLabel")}</span>
+                      <select
+                        value={visibleCalendarMonth.getMonth()}
+                        onChange={(event) =>
+                          handleCalendarMonthJump(Number(event.target.value))
+                        }
+                      >
+                        {getMonthLabels(language).map((month, index) => (
+                          <option key={month} value={index}>
+                            {month}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label>
+                      <span>{t("memories.calendar.yearLabel")}</span>
+                      <select
+                        value={visibleCalendarMonth.getFullYear()}
+                        onChange={(event) =>
+                          handleCalendarYearJump(Number(event.target.value))
+                        }
+                      >
+                        {calendarYears.map((year) => (
+                          <option key={year} value={year}>
+                            {year}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+
                   <div
                     className='memories-calendar-weekdays'
                     aria-hidden='true'
@@ -482,7 +566,19 @@ export function MemoriesPage({ activeView, onNavigate }: MemoriesPageProps) {
 
                   <div className='memories-calendar-grid'>
                     {calendarDays.map((day) => {
-                      const isSelected = selectedCalendarDate === day.dateKey;
+                      const isRangeStart =
+                        selectedCalendarRange?.start === day.dateKey;
+                      const isRangeEnd =
+                        selectedCalendarRange?.end === day.dateKey;
+                      const isInRange = selectedCalendarRange
+                        ? isDateKeyInRange(
+                            day.dateKey,
+                            selectedCalendarRange.start,
+                            selectedCalendarRange.end ??
+                              selectedCalendarRange.start,
+                          )
+                        : false;
+                      const isSelected = isRangeStart || isRangeEnd;
 
                       return (
                         <button
@@ -491,16 +587,19 @@ export function MemoriesPage({ activeView, onNavigate }: MemoriesPageProps) {
                             day.isCurrentMonth ? "" : "is-muted",
                             day.eventCount > 0 ? "has-memory" : "",
                             isSelected ? "is-selected" : "",
+                            isRangeStart ? "is-range-start" : "",
+                            isRangeEnd ? "is-range-end" : "",
+                            isInRange ? "is-in-range" : "",
+                            isRangeStart && !selectedCalendarRange?.end
+                              ? "is-range-pending"
+                              : "",
                             day.isToday ? "is-today" : "",
                           ]
                             .filter(Boolean)
                             .join(" ")}
                           type='button'
                           aria-pressed={isSelected}
-                          onClick={() => {
-                            setOpenActionMenuId(null);
-                            setSelectedCalendarDate(day.dateKey);
-                          }}
+                          onClick={() => handleCalendarDayClick(day.dateKey)}
                         >
                           <span>{day.date.getDate()}</span>
                           {day.eventCount > 0 ? (
@@ -514,19 +613,26 @@ export function MemoriesPage({ activeView, onNavigate }: MemoriesPageProps) {
 
                 <div className='memories-calendar-selection'>
                   <h2>
-                    {selectedCalendarDate
-                      ? t(
-                          "memories.calendar.selectedDate",
-                          formatLongDate(selectedCalendarDate, language),
-                        )
+                    {selectedCalendarRange
+                      ? selectedCalendarRange.end &&
+                        selectedCalendarRange.end !== selectedCalendarRange.start
+                        ? t(
+                            "memories.calendar.selectedRange",
+                            formatLongDate(selectedCalendarRange.start, language),
+                            formatLongDate(selectedCalendarRange.end, language),
+                          )
+                        : t(
+                            "memories.calendar.selectedDate",
+                            formatLongDate(selectedCalendarRange.start, language),
+                          )
                       : t("memories.calendar.allMemories")}
                   </h2>
-                  {selectedCalendarDate ? (
+                  {selectedCalendarRange ? (
                     <button
                       type='button'
                       onClick={() => {
                         setOpenActionMenuId(null);
-                        setSelectedCalendarDate(null);
+                        setSelectedCalendarRange(null);
                       }}
                     >
                       {t("memories.calendar.showAll")}
@@ -608,6 +714,14 @@ function getWeekdayLabels(language: Language): string[] {
   );
 }
 
+function getMonthLabels(language: Language): string[] {
+  return Array.from({ length: 12 }, (_, monthIndex) =>
+    new Intl.DateTimeFormat(language, { month: "long" }).format(
+      new Date(2026, monthIndex, 1),
+    ),
+  );
+}
+
 function buildCalendarDays(
   visibleMonth: Date,
   memoriesByDate: Map<string, MemoryEntry[]>,
@@ -634,6 +748,21 @@ function startOfMonth(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), 1);
 }
 
+function buildCalendarYears(memories: MemoryEntry[], visibleMonth: Date): number[] {
+  const memoryYears = memories.map((memory) =>
+    parseDateKey(memory.dateTime).getFullYear(),
+  );
+  const currentYear = new Date().getFullYear();
+  const visibleYear = visibleMonth.getFullYear();
+  const minYear = Math.min(currentYear, visibleYear, ...memoryYears) - 2;
+  const maxYear = Math.max(currentYear, visibleYear, ...memoryYears) + 2;
+
+  return Array.from(
+    { length: maxYear - minYear + 1 },
+    (_, index) => minYear + index,
+  );
+}
+
 function addMonths(date: Date, monthOffset: number): Date {
   return new Date(date.getFullYear(), date.getMonth() + monthOffset, 1);
 }
@@ -657,4 +786,8 @@ function getDateKey(date: Date): string {
   const day = String(date.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
+}
+
+function isDateKeyInRange(dateKey: string, startDateKey: string, endDateKey: string) {
+  return dateKey >= startDateKey && dateKey <= endDateKey;
 }

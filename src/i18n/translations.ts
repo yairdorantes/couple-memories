@@ -47,7 +47,10 @@ export type TranslationKey =
   | "memories.calendar.ariaLabel"
   | "memories.calendar.previousMonth"
   | "memories.calendar.nextMonth"
+  | "memories.calendar.monthLabel"
+  | "memories.calendar.yearLabel"
   | "memories.calendar.selectedDate"
+  | "memories.calendar.selectedRange"
   | "memories.calendar.allMemories"
   | "memories.calendar.showAll"
   | "memories.searchLabel"
@@ -64,6 +67,43 @@ export type TranslationKey =
   | "memories.actions.edit"
   | "memories.actions.delete"
   | "memories.empty"
+  | "places.title"
+  | "places.count"
+  | "places.subtitle"
+  | "places.map.ariaLabel"
+  | "places.map.missingTokenTitle"
+  | "places.map.missingToken"
+  | "places.detail.visited"
+  | "places.detail.memories"
+  | "places.detail.viewMemories"
+  | "places.category.trip"
+  | "places.category.coffee"
+  | "places.category.home"
+  | "places.category.date"
+  | "places.place.cholula.name"
+  | "places.place.cholula.description"
+  | "places.place.pueblaCafe.name"
+  | "places.place.pueblaCafe.description"
+  | "places.place.home.name"
+  | "places.place.home.description"
+  | "places.memory.coffeeAfterRain"
+  | "places.memory.movieNight"
+  | "profile.eyebrow"
+  | "profile.title"
+  | "profile.subtitle"
+  | "profile.her"
+  | "profile.him"
+  | "profile.her.avatarAlt"
+  | "profile.him.avatarAlt"
+  | "profile.edit"
+  | "profile.save"
+  | "profile.cancel"
+  | "profile.avatar.change"
+  | "profile.name"
+  | "profile.birthday"
+  | "profile.accentColor"
+  | "profile.description"
+  | "profile.note.empty"
   | "memoryForm.title"
   | "memoryForm.editTitle"
   | "memoryForm.titleLabel"
@@ -145,7 +185,11 @@ export const translations: Record<Language, TranslationCatalog> = {
     "memories.calendar.ariaLabel": "Memory calendar",
     "memories.calendar.previousMonth": "Previous month",
     "memories.calendar.nextMonth": "Next month",
+    "memories.calendar.monthLabel": "Month",
+    "memories.calendar.yearLabel": "Year",
     "memories.calendar.selectedDate": (date) => `Memories on ${date}`,
+    "memories.calendar.selectedRange": (start, end) =>
+      `Memories from ${start} to ${end}`,
     "memories.calendar.allMemories": "All memories",
     "memories.calendar.showAll": "Show all",
     "memories.searchLabel": "Search memories",
@@ -162,6 +206,45 @@ export const translations: Record<Language, TranslationCatalog> = {
     "memories.actions.edit": "Edit memory",
     "memories.actions.delete": "Delete memory",
     "memories.empty": "No memories match this search.",
+    "places.title": "Places",
+    "places.count": (count) =>
+      `${count} place${count === 1 ? "" : "s"} visited together`,
+    "places.subtitle": "A map of the stops, dates, and memories we keep coming back to.",
+    "places.map.ariaLabel": "Map of places visited together",
+    "places.map.missingTokenTitle": "Mapbox token missing",
+    "places.map.missingToken": "Add VITE_MAPBOX_ACCESS_TOKEN to your environment to show the map.",
+    "places.detail.visited": "Visited",
+    "places.detail.memories": (count) =>
+      `${count} linked memor${count === 1 ? "y" : "ies"}`,
+    "places.detail.viewMemories": "View memories",
+    "places.category.trip": "Trip",
+    "places.category.coffee": "Coffee",
+    "places.category.home": "Home",
+    "places.category.date": "Date",
+    "places.place.cholula.name": "Cholula",
+    "places.place.cholula.description": "Our first trip together: colorful streets, slow walks, and sunset plans.",
+    "places.place.pueblaCafe.name": "Cafe after the rain",
+    "places.place.pueblaCafe.description": "A quiet Puebla stop where the rain made everything feel softer.",
+    "places.place.home.name": "Home sweet home",
+    "places.place.home.description": "Movie nights, shared snacks, and the small moments that feel like ours.",
+    "places.memory.coffeeAfterRain": "Cafe after the rain",
+    "places.memory.movieNight": "Movie night",
+    "profile.eyebrow": "Couple profile",
+    "profile.title": "Profile",
+    "profile.subtitle": (names) => `Profiles and personal notes for ${names}`,
+    "profile.her": "Her",
+    "profile.him": "Him",
+    "profile.her.avatarAlt": "Her profile avatar",
+    "profile.him.avatarAlt": "His profile avatar",
+    "profile.edit": "Edit",
+    "profile.save": "Save",
+    "profile.cancel": "Cancel",
+    "profile.avatar.change": "Change photo",
+    "profile.name": "Name",
+    "profile.birthday": "Birthday",
+    "profile.accentColor": "Favorite color",
+    "profile.description": "About",
+    "profile.note.empty": "Add a note...",
     "memoryForm.title": "Save Memory",
     "memoryForm.editTitle": "Edit Memory",
     "memoryForm.titleLabel": "Title",
@@ -234,7 +317,11 @@ export const translations: Record<Language, TranslationCatalog> = {
     "memories.calendar.ariaLabel": "Calendario de recuerdos",
     "memories.calendar.previousMonth": "Mes anterior",
     "memories.calendar.nextMonth": "Mes siguiente",
+    "memories.calendar.monthLabel": "Mes",
+    "memories.calendar.yearLabel": "Año",
     "memories.calendar.selectedDate": (date) => `Recuerdos del ${date}`,
+    "memories.calendar.selectedRange": (start, end) =>
+      `Recuerdos del ${start} al ${end}`,
     "memories.calendar.allMemories": "Todos los recuerdos",
     "memories.calendar.showAll": "Ver todos",
     "memories.searchLabel": "Buscar recuerdos",
@@ -251,6 +338,45 @@ export const translations: Record<Language, TranslationCatalog> = {
     "memories.actions.edit": "Editar recuerdo",
     "memories.actions.delete": "Eliminar recuerdo",
     "memories.empty": "No hay recuerdos con esa busqueda.",
+    "places.title": "Lugares",
+    "places.count": (count) =>
+      `${count} lugar${count === 1 ? "" : "es"} visitado${count === 1 ? "" : "s"} juntos`,
+    "places.subtitle": "Un mapa de las paradas, fechas y recuerdos a los que siempre volvemos.",
+    "places.map.ariaLabel": "Mapa de lugares visitados juntos",
+    "places.map.missingTokenTitle": "Falta el token de Mapbox",
+    "places.map.missingToken": "Agrega VITE_MAPBOX_ACCESS_TOKEN a tu entorno para mostrar el mapa.",
+    "places.detail.visited": "Visitado",
+    "places.detail.memories": (count) =>
+      `${count} recuerdo${count === 1 ? "" : "s"} vinculado${count === 1 ? "" : "s"}`,
+    "places.detail.viewMemories": "Ver recuerdos",
+    "places.category.trip": "Viaje",
+    "places.category.coffee": "Cafe",
+    "places.category.home": "Casa",
+    "places.category.date": "Cita",
+    "places.place.cholula.name": "Cholula",
+    "places.place.cholula.description": "Nuestro primer viaje juntos: calles coloridas, caminatas lentas y planes al atardecer.",
+    "places.place.pueblaCafe.name": "Cafe despues de la lluvia",
+    "places.place.pueblaCafe.description": "Una parada tranquila en Puebla donde la lluvia hizo todo mas suave.",
+    "places.place.home.name": "Home sweet home",
+    "places.place.home.description": "Noches de pelicula, snacks compartidos y momentos pequenos que se sienten nuestros.",
+    "places.memory.coffeeAfterRain": "Cafe despues de la lluvia",
+    "places.memory.movieNight": "Noche de pelicula",
+    "profile.eyebrow": "Perfil de pareja",
+    "profile.title": "Perfil",
+    "profile.subtitle": (names) => `Perfiles y notas personales para ${names}`,
+    "profile.her": "Ella",
+    "profile.him": "El",
+    "profile.her.avatarAlt": "Avatar de ella",
+    "profile.him.avatarAlt": "Avatar de el",
+    "profile.edit": "Editar",
+    "profile.save": "Guardar",
+    "profile.cancel": "Cancelar",
+    "profile.avatar.change": "Cambiar foto",
+    "profile.name": "Nombre",
+    "profile.birthday": "Cumpleanos",
+    "profile.accentColor": "Color favorito",
+    "profile.description": "Sobre",
+    "profile.note.empty": "Agregar una nota...",
     "memoryForm.title": "Guardar recuerdo",
     "memoryForm.editTitle": "Editar recuerdo",
     "memoryForm.titleLabel": "Titulo",
