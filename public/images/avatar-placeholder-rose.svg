@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Avatar placeholder">
+  <defs>
+    <linearGradient id="bg" x1="18" x2="142" y1="8" y2="152" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff0f7"/>
+      <stop offset=".58" stop-color="#ffc3dc"/>
+      <stop offset="1" stop-color="#ff7abb"/>
+    </linearGradient>
+    <linearGradient id="dress" x1="37" x2="122" y1="106" y2="160" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff6da9"/>
+      <stop offset="1" stop-color="#ab2b6c"/>
+    </linearGradient>
+  </defs>
+  <rect width="160" height="160" rx="80" fill="url(#bg)"/>
+  <path fill="#58333c" d="M37 72c0-36 18-58 47-58 27 0 44 21 44 56 0 37-21 61-47 61-25 0-44-23-44-59Z"/>
+  <path fill="#f4bf9f" d="M50 69c4 30 16 49 32 49 17 0 30-19 34-49-18 8-43 8-66 0Z"/>
+  <path fill="#6c3b45" d="M47 63c10-6 20-16 26-29 12 18 27 29 47 32-2-32-18-48-42-48-22 0-34 16-31 45Z"/>
+  <path fill="url(#dress)" d="M26 160c6-33 25-54 56-54s50 21 56 54Z"/>
+  <path fill="#fff7fb" opacity=".58" d="M106 28c12 8 20 21 22 39 1 7-5 13-12 12-5-1-9-5-10-11-2-12-7-20-16-27-5-4-6-11-2-15 4-5 12-5 18 2Z"/>
+</svg>
