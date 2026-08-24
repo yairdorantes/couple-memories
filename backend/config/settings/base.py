@@ -17,6 +17,7 @@ env = environ.Env(
     POSTGRES_PASSWORD=(str, "postgres"),
     POSTGRES_HOST=(str, "db"),
     POSTGRES_PORT=(int, 5432),
+    DATABASE_URL=(str, ""),
     CLOUDINARY_CLOUD_NAME=(str, ""),
     CLOUDINARY_API_KEY=(str, ""),
     CLOUDINARY_API_SECRET=(str, ""),
@@ -82,17 +83,22 @@ TEMPLATES = [
     },
 ]
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": env("POSTGRES_DB"),
-        "USER": env("POSTGRES_USER"),
-        "PASSWORD": env("POSTGRES_PASSWORD"),
-        "HOST": env("POSTGRES_HOST"),
-        "PORT": env("POSTGRES_PORT"),
-        "CONN_MAX_AGE": 60,
+DATABASE_URL = env("DATABASE_URL")
+
+if DATABASE_URL:
+    DATABASES = {"default": env.db_url("DATABASE_URL", conn_max_age=60)}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("POSTGRES_DB"),
+            "USER": env("POSTGRES_USER"),
+            "PASSWORD": env("POSTGRES_PASSWORD"),
+            "HOST": env("POSTGRES_HOST"),
+            "PORT": env("POSTGRES_PORT"),
+            "CONN_MAX_AGE": 60,
+        }
     }
-}
 
 AUTH_USER_MODEL = "accounts.User"
 

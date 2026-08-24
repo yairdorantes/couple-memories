@@ -58,6 +58,29 @@ docker compose exec backend python manage.py createsuperuser
 
 The API runs on `http://localhost:8005/api/`.
 
+## Railway Backend Deploy
+
+This repository is an isolated monorepo. In the backend service settings on Railway, set:
+
+```txt
+Root Directory: /backend
+Start Command: ./start.sh
+```
+
+Add a Railway Postgres service, then set the backend service variables:
+
+```txt
+DJANGO_SECRET_KEY=<secure-secret>
+DEBUG=False
+ALLOWED_HOSTS=<your-backend-domain>
+CORS_ALLOWED_ORIGINS=<your-frontend-domain>
+CSRF_TRUSTED_ORIGINS=<your-frontend-domain>
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+CLOUDINARY_CLOUD_NAME=<cloud-name>
+CLOUDINARY_API_KEY=<api-key>
+CLOUDINARY_API_SECRET=<api-secret>
+```
+
 ## Frontend Setup
 
 Run frontend commands from the `frontend/` directory:
