@@ -18,6 +18,11 @@ env = environ.Env(
     POSTGRES_HOST=(str, "db"),
     POSTGRES_PORT=(int, 5432),
     DATABASE_URL=(str, ""),
+    PGDATABASE=(str, ""),
+    PGUSER=(str, ""),
+    PGPASSWORD=(str, ""),
+    PGHOST=(str, ""),
+    PGPORT=(int, 0),
     CLOUDINARY_CLOUD_NAME=(str, ""),
     CLOUDINARY_API_KEY=(str, ""),
     CLOUDINARY_API_SECRET=(str, ""),
@@ -91,11 +96,11 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": env("POSTGRES_DB"),
-            "USER": env("POSTGRES_USER"),
-            "PASSWORD": env("POSTGRES_PASSWORD"),
-            "HOST": env("POSTGRES_HOST"),
-            "PORT": env("POSTGRES_PORT"),
+            "NAME": env("PGDATABASE") or env("POSTGRES_DB"),
+            "USER": env("PGUSER") or env("POSTGRES_USER"),
+            "PASSWORD": env("PGPASSWORD") or env("POSTGRES_PASSWORD"),
+            "HOST": env("PGHOST") or env("POSTGRES_HOST"),
+            "PORT": env("PGPORT") or env("POSTGRES_PORT"),
             "CONN_MAX_AGE": 60,
         }
     }

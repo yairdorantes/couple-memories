@@ -81,6 +81,16 @@ CLOUDINARY_API_KEY=<api-key>
 CLOUDINARY_API_SECRET=<api-secret>
 ```
 
+If `DATABASE_URL` is not available, set these instead:
+
+```txt
+PGDATABASE=${{Postgres.PGDATABASE}}
+PGUSER=${{Postgres.PGUSER}}
+PGPASSWORD=${{Postgres.PGPASSWORD}}
+PGHOST=${{Postgres.PGHOST}}
+PGPORT=${{Postgres.PGPORT}}
+```
+
 ## Frontend Setup
 
 Run frontend commands from the `frontend/` directory:
