@@ -11,6 +11,7 @@ from apps.common.api import get_request_couple_member_role
 
 from .models import Memory, MemoryMedia, Place
 from .permissions import IsMemoryCoupleMember
+from .services import delete_place_if_empty
 from .serializers import (
     MemoryFavoriteSerializer,
     MemoryMediaSerializer,
@@ -136,10 +137,16 @@ class MemoryMediaViewSet(viewsets.ModelViewSet):
         queryset = MemoryMedia.objects.select_related(
             "memory",
             "media",
+            "place",
         )
         if self.request.user.is_authenticated:
             queryset = queryset.filter(memory__couple__members__user=self.request.user)
         return queryset
+
+    def perform_destroy(self, instance):
+        place_id = instance.place_id
+        super().perform_destroy(instance)
+        delete_place_if_empty(place_id)
 
 
 def parse_featured_date(raw_date: str | None) -> date:

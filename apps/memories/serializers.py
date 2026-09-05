@@ -47,11 +47,80 @@ class PlaceSerializer(serializers.ModelSerializer):
 
 class MemoryMediaSerializer(serializers.ModelSerializer):
     media_detail = MediaAssetSerializer(source="media", read_only=True)
+    place_detail = PlaceSerializer(source="place", read_only=True)
 
     class Meta:
         model = MemoryMedia
-        fields = ["id", "media", "media_detail", "sort_order", "caption", "created_at"]
+        fields = [
+            "id",
+            "memory",
+            "media",
+            "media_detail",
+            "sort_order",
+            "caption",
+            "taken_at",
+            "location_name",
+            "latitude",
+            "longitude",
+            "place",
+            "place_detail",
+            "created_at",
+        ]
         read_only_fields = ["created_at"]
+
+    def validate(self, attrs):
+        latitude = attrs.get("latitude", getattr(self.instance, "latitude", None))
+        longitude = attrs.get("longitude", getattr(self.instance, "longitude", None))
+
+        if (latitude is None) != (longitude is None):
+            raise serializers.ValidationError(
+                "Latitude and longitude must be provided together.",
+            )
+        return attrs
+
+    def create(self, validated_data):
+        memory_media = super().create(validated_data)
+        self.sync_place(memory_media)
+        return memory_media
+
+    def update(self, instance, validated_data):
+        previous_place_id = instance.place_id
+        memory_media = super().update(instance, validated_data)
+        self.sync_place(memory_media, previous_place_id=previous_place_id)
+        return memory_media
+
+    def sync_place(self, memory_media, previous_place_id=None):
+        if memory_media.latitude is None or memory_media.longitude is None:
+            if memory_media.place_id:
+                memory_media.place = None
+                memory_media.save(update_fields=["place", "updated_at"])
+                delete_place_if_empty(previous_place_id)
+            return
+
+        memory = memory_media.memory
+        place_name = memory_media.location_name.strip() or memory.location_name.strip() or memory.title
+        place, created = Place.objects.get_or_create(
+            couple=memory.couple,
+            name=place_name,
+            defaults={
+                "description": memory_media.caption or memory.caption,
+                "category": get_place_category(memory.category),
+                "latitude": memory_media.latitude,
+                "longitude": memory_media.longitude,
+                "cover_media": memory_media.media,
+            },
+        )
+
+        if not created and place.cover_media_id is None:
+            place.cover_media = memory_media.media
+            place.save(update_fields=["cover_media", "updated_at"])
+
+        if memory_media.place_id != place.id:
+            memory_media.place = place
+            memory_media.save(update_fields=["place", "updated_at"])
+
+        if previous_place_id and previous_place_id != place.id:
+            delete_place_if_empty(previous_place_id)
 
 
 class MemorySerializer(serializers.ModelSerializer):

@@ -7,6 +7,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
 from apps.couples.models import Couple, CoupleMember
+from apps.mediafiles.models import MediaAsset
 from apps.memories.models import Memory, Place
 
 
@@ -226,6 +227,92 @@ class MemoriesApiTests(TestCase):
         self.assertEqual(place.name, "Cholula")
         self.assertEqual(str(place.latitude), "19.064100")
         self.assertEqual(str(place.longitude), "-98.303500")
+
+    def test_memory_photo_with_coordinates_creates_a_place(self):
+        media = MediaAsset.objects.create(
+            owner=self.user,
+            original_filename="picnic.jpg",
+            secure_url="https://example.com/picnic.jpg",
+        )
+
+        response = self.client.post(
+            "/api/memory-media/",
+            {
+                "memory": self.memory.id,
+                "media": media.id,
+                "caption": "The blanket spot",
+                "location_name": "Parque Metropolitano",
+                "latitude": "19.032800",
+                "longitude": "-98.201400",
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertIsNotNone(response.data["place"])
+        self.assertEqual(response.data["place_detail"]["name"], "Parque Metropolitano")
+
+    def test_deleting_the_last_photo_at_a_place_removes_the_place(self):
+        media = MediaAsset.objects.create(
+            owner=self.user,
+            original_filename="walk.jpg",
+            secure_url="https://example.com/walk.jpg",
+        )
+        created_response = self.client.post(
+            "/api/memory-media/",
+            {
+                "memory": self.memory.id,
+                "media": media.id,
+                "location_name": "Parque Metropolitano",
+                "latitude": "19.032800",
+                "longitude": "-98.201400",
+            },
+            format="json",
+        )
+        place_id = created_response.data["place"]
+
+        response = self.client.delete(
+            f"/api/memory-media/{created_response.data['id']}/",
+        )
+
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(Place.objects.filter(pk=place_id).exists())
+
+    def test_updating_photo_metadata_relinks_its_place(self):
+        media = MediaAsset.objects.create(
+            owner=self.user,
+            original_filename="walk.jpg",
+            secure_url="https://example.com/walk.jpg",
+        )
+        created_response = self.client.post(
+            "/api/memory-media/",
+            {
+                "memory": self.memory.id,
+                "media": media.id,
+                "caption": "Original caption",
+                "location_name": "Parque Metropolitano",
+                "latitude": "19.032800",
+                "longitude": "-98.201400",
+            },
+            format="json",
+        )
+        original_place_id = created_response.data["place"]
+
+        response = self.client.patch(
+            f"/api/memory-media/{created_response.data['id']}/",
+            {
+                "caption": "Sunset at the new spot",
+                "location_name": "Cerro de Amalucan",
+                "latitude": "19.060500",
+                "longitude": "-98.169200",
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["caption"], "Sunset at the new spot")
+        self.assertEqual(response.data["place_detail"]["name"], "Cerro de Amalucan")
+        self.assertFalse(Place.objects.filter(pk=original_place_id).exists())
 
     def test_updating_memory_to_clear_coordinates_unlinks_place(self):
         place = Place.objects.create(

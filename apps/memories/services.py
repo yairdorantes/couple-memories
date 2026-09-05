@@ -6,5 +6,5 @@ def delete_place_if_empty(place_id: int | None) -> None:
         return
 
     place = Place.objects.filter(pk=place_id).first()
-    if place and not place.memories.exists():
+    if place and not place.memories.exists() and not place.memory_media.exists():
         place.delete()

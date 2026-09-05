@@ -132,16 +132,37 @@ class MemoryMedia(TimeStampedModel):
     media = models.ForeignKey("mediafiles.MediaAsset", on_delete=models.CASCADE, related_name="memory_links")
     sort_order = models.PositiveIntegerField(default=0)
     caption = models.TextField(blank=True)
+    taken_at = models.DateTimeField(null=True, blank=True)
+    location_name = models.TextField(blank=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    place = models.ForeignKey(
+        Place,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="memory_media",
+    )
 
     class Meta:
         db_table = "memory_media"
         ordering = ["sort_order", "created_at"]
-        constraints = [
-            models.UniqueConstraint(fields=["memory", "media"], name="unique_media_per_memory"),
-        ]
         indexes = [
             models.Index(fields=["memory", "sort_order"]),
             models.Index(fields=["media"]),
+            models.Index(fields=["place"]),
+        ]
+        constraints = [
+            models.UniqueConstraint(fields=["memory", "media"], name="unique_media_per_memory"),
+            models.CheckConstraint(
+                check=models.Q(latitude__isnull=True) | (models.Q(latitude__gte=-90) & models.Q(latitude__lte=90)),
+                name="memory_media_latitude_range",
+            ),
+            models.CheckConstraint(
+                check=models.Q(longitude__isnull=True)
+                | (models.Q(longitude__gte=-180) & models.Q(longitude__lte=180)),
+                name="memory_media_longitude_range",
+            ),
         ]
 
     def __str__(self) -> str:
