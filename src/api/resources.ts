@@ -8,9 +8,12 @@ import type {
   ApiIntimacyRecord,
   ApiMediaAsset,
   ApiMemory,
+  ApiMemoryMedia,
   ApiPlace,
   IntimacyDraftPayload,
   MemoryDraftPayload,
+  MemoryMediaDraftPayload,
+  MemoryMediaMetadataPayload,
   PaginatedResponse,
 } from "./types";
 
@@ -20,6 +23,7 @@ export const queryKeys = {
   featuredMemories: (date: string, timezoneOffset: number) => ["featured-memories", date, timezoneOffset] as const,
   intimacyRecords: ["intimacy-records"] as const,
   memories: (params: MemoryListParams) => ["memories", params] as const,
+  memory: (memoryId: number) => ["memory", memoryId] as const,
   places: ["places"] as const,
 };
 
@@ -175,6 +179,10 @@ export async function listFeaturedMemories(date: string, timezoneOffset: number)
   });
 }
 
+export async function getMemory(memoryId: number): Promise<ApiMemory> {
+  return apiRequest<ApiMemory>(`/memories/${memoryId}/`);
+}
+
 export async function createMemory(payload: MemoryDraftPayload): Promise<ApiMemory> {
   return apiRequest<ApiMemory>("/memories/", {
     method: "POST",
@@ -191,6 +199,29 @@ export async function updateMemory(memoryId: string, payload: Partial<MemoryDraf
 
 export async function deleteMemory(memoryId: string): Promise<void> {
   await apiRequest<void>(`/memories/${memoryId}/`, {
+    method: "DELETE",
+  });
+}
+
+export async function createMemoryMedia(payload: MemoryMediaDraftPayload): Promise<ApiMemoryMedia> {
+  return apiRequest<ApiMemoryMedia>("/memory-media/", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function updateMemoryMedia(
+  memoryMediaId: number,
+  payload: MemoryMediaMetadataPayload,
+): Promise<ApiMemoryMedia> {
+  return apiRequest<ApiMemoryMedia>(`/memory-media/${memoryMediaId}/`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function deleteMemoryMedia(memoryMediaId: number): Promise<void> {
+  await apiRequest<void>(`/memory-media/${memoryMediaId}/`, {
     method: "DELETE",
   });
 }

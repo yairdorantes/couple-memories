@@ -44,6 +44,7 @@ import {
 type MemoriesPageProps = {
   activeView: AppView;
   onNavigate: (view: AppView) => void;
+  onOpenMemory: (memoryId: string) => void;
 };
 
 type CalendarRange = {
@@ -60,7 +61,7 @@ const viewIcons: Record<MemoryViewMode, typeof TrendingUp> = {
 const timelineFallbackImageSrc = "/images/featured-memory-placeholder.svg";
 const initialCalendarDateKey = getDateKey(new Date());
 
-export function MemoriesPage({ activeView, onNavigate }: MemoriesPageProps) {
+export function MemoriesPage({ activeView, onNavigate, onOpenMemory }: MemoriesPageProps) {
   const { language, t } = useI18n();
   const { showToast } = useToast();
   const [activeMode, setActiveMode] = useState<MemoryViewMode>("timeline");
@@ -281,7 +282,18 @@ export function MemoriesPage({ activeView, onNavigate }: MemoriesPageProps) {
 
   function renderTimelineMemory(memory: MemoryEntry) {
     return (
-      <article className='memory-entry' key={memory.id}>
+      <article
+        className='memory-entry memory-entry--interactive'
+        key={memory.id}
+        tabIndex={0}
+        onClick={() => onOpenMemory(memory.id)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            onOpenMemory(memory.id);
+          }
+        }}
+      >
         <div className='memory-entry-rail'>
           <div className='memory-entry-marker' aria-hidden='true' />
         </div>
@@ -344,6 +356,7 @@ export function MemoriesPage({ activeView, onNavigate }: MemoriesPageProps) {
             setOpenActionMenuId(null);
           }
         }}
+        onClick={(event) => event.stopPropagation()}
       >
         <button
           className='memory-action-menu-trigger'
@@ -510,7 +523,18 @@ export function MemoriesPage({ activeView, onNavigate }: MemoriesPageProps) {
                   const hasPrimaryImage = memory.image.src.trim().length > 0;
 
                   return (
-                    <article className='memory-grid-card' key={memory.id}>
+                    <article
+                      className='memory-grid-card memory-grid-card--interactive'
+                      key={memory.id}
+                      tabIndex={0}
+                      onClick={() => onOpenMemory(memory.id)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          onOpenMemory(memory.id);
+                        }
+                      }}
+                    >
                       <div className='memory-grid-visual'>
                         {hasPrimaryImage ? (
                           <PositionedImage

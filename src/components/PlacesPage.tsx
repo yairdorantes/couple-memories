@@ -19,12 +19,13 @@ import { getDateForDisplay, getLocalDateKey } from "../utils/dateTime";
 type PlacesPageProps = {
   activeView: AppView;
   onNavigate: (view: AppView) => void;
+  onOpenMemory: (memoryId: string) => void;
 };
 
 const emptyPlaces: ApiPlace[] = [];
 const emptyMemories: ApiMemory[] = [];
 
-export function PlacesPage({ activeView, onNavigate }: PlacesPageProps) {
+export function PlacesPage({ activeView, onNavigate, onOpenMemory }: PlacesPageProps) {
   const { language, t } = useI18n();
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -179,6 +180,7 @@ export function PlacesPage({ activeView, onNavigate }: PlacesPageProps) {
                 memories={memories}
                 language={language}
                 onNavigate={onNavigate}
+                onOpenMemory={onOpenMemory}
               />
             ) : null}
           </div>
@@ -219,11 +221,12 @@ type PlaceDetailProps = {
   memories: ApiMemory[];
   language: string;
   onNavigate: (view: AppView) => void;
+  onOpenMemory: (memoryId: string) => void;
 };
 
-function PlaceDetail({ place, memories, language, onNavigate }: PlaceDetailProps) {
+function PlaceDetail({ place, memories, language, onNavigate, onOpenMemory }: PlaceDetailProps) {
   const { t } = useI18n();
-  const placeMemories = memories.filter((memory) => memory.place === place.id);
+  const placeMemories = memories.filter((memory) => isMemoryLinkedToPlace(memory, place.id));
 
   return (
     <article className='place-detail-card'>
@@ -247,7 +250,21 @@ function PlaceDetail({ place, memories, language, onNavigate }: PlaceDetailProps
           <div>
             <Images aria-hidden='true' />
             <dt>{t("places.detail.memories", placeMemories.length)}</dt>
-            <dd>{placeMemories.map((memory) => memory.title).join(", ") || "No memories yet"}</dd>
+            <dd className='place-detail-memory-links'>
+              {placeMemories.length > 0 ? (
+                placeMemories.map((memory) => (
+                  <button
+                    key={memory.id}
+                    type='button'
+                    onClick={() => onOpenMemory(String(memory.id))}
+                  >
+                    {memory.title}
+                  </button>
+                ))
+              ) : (
+                "No memories yet"
+              )}
+            </dd>
           </div>
         </dl>
         <button type='button' onClick={() => onNavigate("memories")}>
@@ -276,10 +293,14 @@ function getPlacesCenter(places: ApiPlace[]): [number, number] {
 
 function getPlaceVisitedDates(place: ApiPlace, memories: ApiMemory[]): string[] {
   const dates = memories
-    .filter((memory) => memory.place === place.id)
+    .filter((memory) => isMemoryLinkedToPlace(memory, place.id))
     .map((memory) => getLocalDateKey(memory.happened_at));
 
   return dates.length > 0 ? dates : [getLocalDateKey(place.created_at)];
+}
+
+function isMemoryLinkedToPlace(memory: ApiMemory, placeId: number): boolean {
+  return memory.place === placeId || memory.media_links.some((media) => media.place === placeId);
 }
 
 function formatVisitedDates(dates: string[], language: string): string {

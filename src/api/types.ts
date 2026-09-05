@@ -90,8 +90,25 @@ export type ApiMemory = {
   place_detail?: ApiPlace | null;
   primary_media: number | null;
   primary_media_detail?: ApiMediaAsset | null;
+  media_links: ApiMemoryMedia[];
   created_at: string;
   updated_at: string;
+};
+
+export type ApiMemoryMedia = {
+  id: number;
+  memory: number;
+  media: number;
+  media_detail?: ApiMediaAsset | null;
+  sort_order: number;
+  caption: string;
+  taken_at: string | null;
+  location_name: string;
+  latitude: string | null;
+  longitude: string | null;
+  place: number | null;
+  place_detail?: ApiPlace | null;
+  created_at: string;
 };
 
 export type ApiIntimacyRecord = {
@@ -121,6 +138,24 @@ export type MemoryDraftPayload = {
   happened_at: string;
   primary_media?: number | null;
 };
+
+export type MemoryMediaDraftPayload = {
+  memory: number;
+  media: number;
+  sort_order?: number;
+  caption?: string;
+  taken_at?: string | null;
+  location_name?: string;
+  latitude?: number | string | null;
+  longitude?: number | string | null;
+};
+
+export type MemoryMediaMetadataPayload = Partial<
+  Pick<
+    MemoryMediaDraftPayload,
+    "caption" | "taken_at" | "location_name" | "latitude" | "longitude"
+  >
+>;
 
 export type IntimacyDraftPayload = {
   couple: number;

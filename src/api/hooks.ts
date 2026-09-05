@@ -3,24 +3,34 @@ import {
   createCoupleHeroImage,
   createIntimacyRecord,
   createMemory,
+  createMemoryMedia,
   deleteCoupleHeroImage,
   deleteIntimacyRecord,
   deleteMemory,
+  deleteMemoryMedia,
   ensureDefaultCouple,
   listCoupleHeroImages,
   listFeaturedMemories,
   listIntimacyRecords,
   listMemories,
+  getMemory,
   listPlaces,
   queryKeys,
   updateCoupleHeroImage,
   updateIntimacyRecord,
   updateCoupleMember,
   updateMemory,
+  updateMemoryMedia,
   uploadMedia,
   type MemoryListParams,
 } from "./resources";
-import type { ApiCoupleHeroImage, ApiCoupleMember, IntimacyDraftPayload, MemoryDraftPayload } from "./types";
+import type {
+  ApiCoupleHeroImage,
+  ApiCoupleMember,
+  IntimacyDraftPayload,
+  MemoryDraftPayload,
+  MemoryMediaMetadataPayload,
+} from "./types";
 
 export function useDefaultCouple() {
   return useQuery({
@@ -45,6 +55,14 @@ export function useMemories(params: MemoryListParams) {
     queryFn: ({ pageParam }) => listMemories({ ...params, page: pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => lastPage.next ? allPages.length + 1 : undefined,
+    staleTime: 20_000,
+  });
+}
+
+export function useMemory(memoryId: number) {
+  return useQuery({
+    queryKey: queryKeys.memory(memoryId),
+    queryFn: () => getMemory(memoryId),
     staleTime: 20_000,
   });
 }
@@ -118,11 +136,36 @@ export function useMemoryMutations() {
     updateMemory: useMutation({
       mutationFn: ({ id, payload }: { id: string; payload: Partial<MemoryDraftPayload> & { is_favorite?: boolean } }) =>
         updateMemory(id, payload),
-      onSuccess: invalidateMemories,
+      onSuccess: (memory) => {
+        queryClient.invalidateQueries({ queryKey: queryKeys.memory(memory.id) });
+        return invalidateMemories();
+      },
     }),
     deleteMemory: useMutation({
       mutationFn: deleteMemory,
       onSuccess: invalidateMemories,
+    }),
+    deleteMemoryMedia: useMutation({
+      mutationFn: deleteMemoryMedia,
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["memory"] });
+        return invalidateMemories();
+      },
+    }),
+    updateMemoryMedia: useMutation({
+      mutationFn: ({ id, payload }: { id: number; payload: MemoryMediaMetadataPayload }) =>
+        updateMemoryMedia(id, payload),
+      onSuccess: (memoryMedia) => {
+        queryClient.invalidateQueries({ queryKey: queryKeys.memory(memoryMedia.memory) });
+        return invalidateMemories();
+      },
+    }),
+    createMemoryMedia: useMutation({
+      mutationFn: createMemoryMedia,
+      onSuccess: (memoryMedia) => {
+        queryClient.invalidateQueries({ queryKey: queryKeys.memory(memoryMedia.memory) });
+        return invalidateMemories();
+      },
     }),
   };
 }

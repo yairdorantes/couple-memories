@@ -207,6 +207,45 @@ export type TranslationKey =
   | "memoryForm.cancel"
   | "memoryForm.save"
   | "memoryForm.update"
+  | "memoryDetail.back"
+  | "memoryDetail.photoCount"
+  | "memoryDetail.collectionEyebrow"
+  | "memoryDetail.collectionTitle"
+  | "memoryDetail.addPhoto"
+  | "memoryDetail.openPhoto"
+  | "memoryDetail.editPhoto"
+  | "memoryDetail.removePhoto"
+  | "memoryDetail.removeConfirm"
+  | "memoryDetail.removed"
+  | "memoryDetail.added"
+  | "memoryDetail.loading"
+  | "memoryDetail.notFoundTitle"
+  | "memoryDetail.notFoundCopy"
+  | "memoryDetail.backToMemories"
+  | "memoryDetail.noPhotos"
+  | "memoryDetail.closePhoto"
+  | "memoryDetail.previousPhoto"
+  | "memoryDetail.nextPhoto"
+  | "memoryDetail.addDialogTitle"
+  | "memoryDetail.editDialogTitle"
+  | "memoryDetail.photoLabel"
+  | "memoryDetail.captionLabel"
+  | "memoryDetail.captionPlaceholder"
+  | "memoryDetail.dateLabel"
+  | "memoryDetail.locationLabel"
+  | "memoryDetail.locationPlaceholder"
+  | "memoryDetail.latitudeLabel"
+  | "memoryDetail.longitudeLabel"
+  | "memoryDetail.coordinatesHint"
+  | "memoryDetail.addingPhoto"
+  | "memoryDetail.addPhotoSubmit"
+  | "memoryDetail.savingPhoto"
+  | "memoryDetail.savePhoto"
+  | "memoryDetail.updated"
+  | "memoryDetail.cancel"
+  | "memoryDetail.photoRequired"
+  | "memoryDetail.photoTypeError"
+  | "memoryDetail.coordinatesError"
   | "actions.addMemory"
   | "language.label"
   | "language.english"
@@ -442,6 +481,45 @@ export const translations: Record<Language, TranslationCatalog> = {
     "memoryForm.cancel": "Cancel",
     "memoryForm.save": "Save Memory",
     "memoryForm.update": "Update Memory",
+    "memoryDetail.back": "Memories",
+    "memoryDetail.photoCount": (count) => `${count} photo${Number(count) === 1 ? "" : "s"}`,
+    "memoryDetail.collectionEyebrow": "Photo collection",
+    "memoryDetail.collectionTitle": "Every frame from this day",
+    "memoryDetail.addPhoto": "Add photo",
+    "memoryDetail.openPhoto": (index, count) => `Open photo ${index} of ${count}`,
+    "memoryDetail.editPhoto": (index) => `Edit photo ${index} metadata`,
+    "memoryDetail.removePhoto": (index) => `Remove photo ${index} from memory`,
+    "memoryDetail.removeConfirm": "Remove this photo from the memory? The original uploaded file will be kept.",
+    "memoryDetail.removed": "Photo removed from memory",
+    "memoryDetail.added": "Photo added to memory",
+    "memoryDetail.loading": "Loading memory...",
+    "memoryDetail.notFoundTitle": "Memory not found",
+    "memoryDetail.notFoundCopy": "This memory may have been removed.",
+    "memoryDetail.backToMemories": "Back to memories",
+    "memoryDetail.noPhotos": "Add the first photo from this memory.",
+    "memoryDetail.closePhoto": "Close photo",
+    "memoryDetail.previousPhoto": "Previous photo",
+    "memoryDetail.nextPhoto": "Next photo",
+    "memoryDetail.addDialogTitle": "Add photo",
+    "memoryDetail.editDialogTitle": "Edit photo details",
+    "memoryDetail.photoLabel": "Photo",
+    "memoryDetail.captionLabel": "Caption",
+    "memoryDetail.captionPlaceholder": "A note about this frame",
+    "memoryDetail.dateLabel": "Date and time",
+    "memoryDetail.locationLabel": "Location",
+    "memoryDetail.locationPlaceholder": "Optional photo location",
+    "memoryDetail.latitudeLabel": "Latitude",
+    "memoryDetail.longitudeLabel": "Longitude",
+    "memoryDetail.coordinatesHint": "Coordinates add this photo's location to Places.",
+    "memoryDetail.addingPhoto": "Adding...",
+    "memoryDetail.addPhotoSubmit": "Add photo",
+    "memoryDetail.savingPhoto": "Saving...",
+    "memoryDetail.savePhoto": "Save changes",
+    "memoryDetail.updated": "Photo details updated",
+    "memoryDetail.cancel": "Cancel",
+    "memoryDetail.photoRequired": "Choose a photo to add.",
+    "memoryDetail.photoTypeError": "Use a JPG, PNG, WEBP, or HEIC image.",
+    "memoryDetail.coordinatesError": "Enter valid latitude and longitude together, or leave both empty.",
     "actions.addMemory": "Add a memory",
     "language.label": "Language",
     "language.english": "EN",
@@ -670,6 +748,45 @@ export const translations: Record<Language, TranslationCatalog> = {
     "memoryForm.cancel": "Cancelar",
     "memoryForm.save": "Guardar recuerdo",
     "memoryForm.update": "Actualizar recuerdo",
+    "memoryDetail.back": "Recuerdos",
+    "memoryDetail.photoCount": (count) => `${count} foto${Number(count) === 1 ? "" : "s"}`,
+    "memoryDetail.collectionEyebrow": "Coleccion de fotos",
+    "memoryDetail.collectionTitle": "Cada momento de este dia",
+    "memoryDetail.addPhoto": "Agregar foto",
+    "memoryDetail.openPhoto": (index, count) => `Abrir foto ${index} de ${count}`,
+    "memoryDetail.editPhoto": (index) => `Editar datos de la foto ${index}`,
+    "memoryDetail.removePhoto": (index) => `Quitar foto ${index} del recuerdo`,
+    "memoryDetail.removeConfirm": "¿Quitar esta foto del recuerdo? El archivo original se conservara.",
+    "memoryDetail.removed": "Foto quitada del recuerdo",
+    "memoryDetail.added": "Foto agregada al recuerdo",
+    "memoryDetail.loading": "Cargando recuerdo...",
+    "memoryDetail.notFoundTitle": "No se encontro el recuerdo",
+    "memoryDetail.notFoundCopy": "Es posible que este recuerdo haya sido eliminado.",
+    "memoryDetail.backToMemories": "Volver a recuerdos",
+    "memoryDetail.noPhotos": "Agrega la primera foto de este recuerdo.",
+    "memoryDetail.closePhoto": "Cerrar foto",
+    "memoryDetail.previousPhoto": "Foto anterior",
+    "memoryDetail.nextPhoto": "Siguiente foto",
+    "memoryDetail.addDialogTitle": "Agregar foto",
+    "memoryDetail.editDialogTitle": "Editar detalles de la foto",
+    "memoryDetail.photoLabel": "Foto",
+    "memoryDetail.captionLabel": "Descripcion",
+    "memoryDetail.captionPlaceholder": "Una nota sobre esta foto",
+    "memoryDetail.dateLabel": "Fecha y hora",
+    "memoryDetail.locationLabel": "Lugar",
+    "memoryDetail.locationPlaceholder": "Lugar opcional de la foto",
+    "memoryDetail.latitudeLabel": "Latitud",
+    "memoryDetail.longitudeLabel": "Longitud",
+    "memoryDetail.coordinatesHint": "Las coordenadas agregan el lugar de esta foto a Lugares.",
+    "memoryDetail.addingPhoto": "Agregando...",
+    "memoryDetail.addPhotoSubmit": "Agregar foto",
+    "memoryDetail.savingPhoto": "Guardando...",
+    "memoryDetail.savePhoto": "Guardar cambios",
+    "memoryDetail.updated": "Detalles de la foto actualizados",
+    "memoryDetail.cancel": "Cancelar",
+    "memoryDetail.photoRequired": "Elige una foto para agregar.",
+    "memoryDetail.photoTypeError": "Usa una imagen JPG, PNG, WEBP o HEIC.",
+    "memoryDetail.coordinatesError": "Ingresa latitud y longitud validas juntas, o deja ambas vacias.",
     "actions.addMemory": "Agregar un recuerdo",
     "language.label": "Idioma",
     "language.english": "EN",
