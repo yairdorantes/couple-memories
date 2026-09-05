@@ -502,12 +502,21 @@ type PhotoUploadDialogProps = {
 function PhotoUploadDialog({ isSaving, onClose, onSave }: PhotoUploadDialogProps) {
   const { t } = useI18n();
   const [file, setFile] = useState<File>();
+  const [previewUrl, setPreviewUrl] = useState<string>();
   const [caption, setCaption] = useState("");
   const [location, setLocation] = useState("");
   const [takenAt, setTakenAt] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const selectedFile = event.target.files?.[0];
@@ -516,6 +525,7 @@ function PhotoUploadDialog({ isSaving, onClose, onSave }: PhotoUploadDialogProps
       setError(t("memoryDetail.photoTypeError"));
       return;
     }
+    setPreviewUrl(URL.createObjectURL(selectedFile));
     setFile(selectedFile);
     setError("");
   }
@@ -545,12 +555,17 @@ function PhotoUploadDialog({ isSaving, onClose, onSave }: PhotoUploadDialogProps
     <div className="memory-photo-dialog-backdrop" onClick={handleBackdropClick}>
       <form className="memory-photo-dialog" role="dialog" aria-modal="true" aria-labelledby="memory-photo-dialog-title" onSubmit={handleSubmit}>
         <header><h2 id="memory-photo-dialog-title">{t("memoryDetail.addDialogTitle")}</h2><button type="button" onClick={onClose} aria-label={t("memoryDetail.closePhoto")}><X aria-hidden="true" /></button></header>
-        <label><span>{t("memoryDetail.photoLabel")}</span><input type="file" accept="image/jpeg,image/png,image/webp,image/heic" disabled={isSaving} onChange={handleFileChange} />{file ? <small>{file.name}</small> : null}</label>
+        <div className="memory-photo-dialog-photo-field">
+          <span>{t("memoryDetail.photoLabel")}</span>
+          <label className="memory-photo-dialog-picker">
+            <input type="file" accept="image/jpeg,image/png,image/webp,image/heic" disabled={isSaving} onChange={handleFileChange} />
+            {previewUrl ? <img src={previewUrl} alt={file?.name ?? t("memoryDetail.photoLabel")} /> : <span><ImagePlus aria-hidden="true" />{t("memoryForm.photoButton")}</span>}
+          </label>
+          {file ? <small>{file.name}</small> : null}
+        </div>
         <label><span>{t("memoryDetail.captionLabel")}</span><textarea value={caption} onChange={(event) => setCaption(event.target.value)} placeholder={t("memoryDetail.captionPlaceholder")} /></label>
         <label><span>{t("memoryDetail.dateLabel")}</span><input type="datetime-local" value={takenAt} onChange={(event) => setTakenAt(event.target.value)} /></label>
-        <label><span>{t("memoryDetail.locationLabel")}</span><input value={location} onChange={(event) => setLocation(event.target.value)} placeholder={t("memoryDetail.locationPlaceholder")} /></label>
-        <div className="memory-photo-dialog-coordinates"><label><span>{t("memoryDetail.latitudeLabel")}</span><input type="number" step="0.000001" value={latitude} onChange={(event) => setLatitude(event.target.value)} /></label><label><span>{t("memoryDetail.longitudeLabel")}</span><input type="number" step="0.000001" value={longitude} onChange={(event) => setLongitude(event.target.value)} /></label></div>
-        <small>{t("memoryDetail.coordinatesHint")}</small>
+        <PhotoLocationFields location={location} latitude={latitude} longitude={longitude} onLocationChange={setLocation} onLatitudeChange={setLatitude} onLongitudeChange={setLongitude} />
         {error ? <p>{error}</p> : null}
         <footer><button type="button" onClick={onClose} disabled={isSaving}>{t("memoryDetail.cancel")}</button><button type="submit" disabled={isSaving}>{isSaving ? t("memoryDetail.addingPhoto") : t("memoryDetail.addPhotoSubmit")}</button></footer>
       </form>
@@ -609,12 +624,53 @@ function PhotoMetadataDialog({ photo, isSaving, onClose, onSave }: PhotoMetadata
         <header><h2 id="memory-photo-edit-dialog-title">{t("memoryDetail.editDialogTitle")}</h2><button type="button" onClick={onClose} aria-label={t("memoryDetail.closePhoto")}><X aria-hidden="true" /></button></header>
         <label><span>{t("memoryDetail.captionLabel")}</span><textarea value={caption} onChange={(event) => setCaption(event.target.value)} placeholder={t("memoryDetail.captionPlaceholder")} /></label>
         <label><span>{t("memoryDetail.dateLabel")}</span><input type="datetime-local" required={photo.type === "primary"} value={takenAt} onChange={(event) => setTakenAt(event.target.value)} /></label>
-        <label><span>{t("memoryDetail.locationLabel")}</span><input value={location} onChange={(event) => setLocation(event.target.value)} placeholder={t("memoryDetail.locationPlaceholder")} /></label>
-        <div className="memory-photo-dialog-coordinates"><label><span>{t("memoryDetail.latitudeLabel")}</span><input type="number" step="0.000001" value={latitude} onChange={(event) => setLatitude(event.target.value)} /></label><label><span>{t("memoryDetail.longitudeLabel")}</span><input type="number" step="0.000001" value={longitude} onChange={(event) => setLongitude(event.target.value)} /></label></div>
-        <small>{t("memoryDetail.coordinatesHint")}</small>
+        <PhotoLocationFields location={location} latitude={latitude} longitude={longitude} onLocationChange={setLocation} onLatitudeChange={setLatitude} onLongitudeChange={setLongitude} />
         {error ? <p>{error}</p> : null}
         <footer><button type="button" onClick={onClose} disabled={isSaving}>{t("memoryDetail.cancel")}</button><button type="submit" disabled={isSaving}>{isSaving ? t("memoryDetail.savingPhoto") : t("memoryDetail.savePhoto")}</button></footer>
       </form>
     </div>
+  );
+}
+
+type PhotoLocationFieldsProps = {
+  location: string;
+  latitude: string;
+  longitude: string;
+  onLocationChange: (value: string) => void;
+  onLatitudeChange: (value: string) => void;
+  onLongitudeChange: (value: string) => void;
+};
+
+function PhotoLocationFields({
+  location,
+  latitude,
+  longitude,
+  onLocationChange,
+  onLatitudeChange,
+  onLongitudeChange,
+}: PhotoLocationFieldsProps) {
+  const { t } = useI18n();
+
+  return (
+    <>
+      <label>
+        <span>{t("memoryDetail.locationLabel")}</span>
+        <input value={location} onChange={(event) => onLocationChange(event.target.value)} placeholder={t("memoryDetail.locationPlaceholder")} />
+      </label>
+      <fieldset className="memory-photo-dialog-coordinates">
+        <legend>{t("memoryForm.coordinatesLabel")}</legend>
+        <div>
+          <label>
+            <span>{t("memoryDetail.latitudeLabel")}</span>
+            <input type="number" inputMode="decimal" min="-90" max="90" step="0.000001" value={latitude} placeholder="19.043300" onChange={(event) => onLatitudeChange(event.target.value)} />
+          </label>
+          <label>
+            <span>{t("memoryDetail.longitudeLabel")}</span>
+            <input type="number" inputMode="decimal" min="-180" max="180" step="0.000001" value={longitude} placeholder="-98.201900" onChange={(event) => onLongitudeChange(event.target.value)} />
+          </label>
+        </div>
+        <small>{t("memoryDetail.coordinatesHint")}</small>
+      </fieldset>
+    </>
   );
 }
