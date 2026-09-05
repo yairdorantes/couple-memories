@@ -10,10 +10,10 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends build-essential libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY backend/requirements/base.txt backend/requirements/development.txt ./requirements/
+COPY requirements/base.txt requirements/development.txt ./requirements/
 RUN pip install -r requirements/development.txt
 
-COPY backend/ .
+COPY . .
 
 EXPOSE 8000
 
