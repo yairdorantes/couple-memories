@@ -192,6 +192,8 @@ export type TranslationKey =
   | "memoryForm.titlePlaceholder"
   | "memoryForm.captionLabel"
   | "memoryForm.captionPlaceholder"
+  | "memoryForm.placeLabel"
+  | "memoryForm.placePlaceholder"
   | "memoryForm.locationLabel"
   | "memoryForm.locationPlaceholder"
   | "memoryForm.coordinatesLabel"
@@ -220,6 +222,7 @@ export type TranslationKey =
   | "locationPicker.noToken"
   | "locationPicker.searchError"
   | "locationPicker.locationUnavailable"
+  | "locationPicker.clear"
   | "memoryDetail.back"
   | "memoryDetail.photoCount"
   | "memoryDetail.collectionEyebrow"
@@ -478,6 +481,8 @@ export const translations: Record<Language, TranslationCatalog> = {
     "memoryForm.titlePlaceholder": "Title (e.g. Sunset Walk)",
     "memoryForm.captionLabel": "Caption",
     "memoryForm.captionPlaceholder": "Caption / Memory notes",
+    "memoryForm.placeLabel": "Place name (optional)",
+    "memoryForm.placePlaceholder": "e.g. Our favorite cafe",
     "memoryForm.locationLabel": "Location",
     "memoryForm.locationPlaceholder": "Location (e.g. Cholula)",
     "memoryForm.coordinatesLabel": "Location coordinates",
@@ -507,6 +512,7 @@ export const translations: Record<Language, TranslationCatalog> = {
     "locationPicker.noToken": "Map search is unavailable until a Mapbox token is configured.",
     "locationPicker.searchError": "Could not search locations. Try again.",
     "locationPicker.locationUnavailable": "Your current location is unavailable. Check your browser permission.",
+    "locationPicker.clear": "Clear location",
     "memoryDetail.back": "Memories",
     "memoryDetail.photoCount": (count) => `${count} photo${Number(count) === 1 ? "" : "s"}`,
     "memoryDetail.collectionEyebrow": "Photo collection",
@@ -758,6 +764,8 @@ export const translations: Record<Language, TranslationCatalog> = {
     "memoryForm.titlePlaceholder": "Titulo (ej. Caminata al atardecer)",
     "memoryForm.captionLabel": "Caption",
     "memoryForm.captionPlaceholder": "Caption / notas del recuerdo",
+    "memoryForm.placeLabel": "Nombre del lugar (opcional)",
+    "memoryForm.placePlaceholder": "ej. Nuestro cafe favorito",
     "memoryForm.locationLabel": "Lugar",
     "memoryForm.locationPlaceholder": "Lugar (ej. Cholula)",
     "memoryForm.coordinatesLabel": "Coordenadas",
@@ -787,6 +795,7 @@ export const translations: Record<Language, TranslationCatalog> = {
     "locationPicker.noToken": "La busqueda de mapas no esta disponible hasta configurar un token de Mapbox.",
     "locationPicker.searchError": "No se pudieron buscar lugares. Intenta de nuevo.",
     "locationPicker.locationUnavailable": "Tu ubicacion actual no esta disponible. Revisa el permiso del navegador.",
+    "locationPicker.clear": "Limpiar lugar",
     "memoryDetail.back": "Recuerdos",
     "memoryDetail.photoCount": (count) => `${count} foto${Number(count) === 1 ? "" : "s"}`,
     "memoryDetail.collectionEyebrow": "Coleccion de fotos",

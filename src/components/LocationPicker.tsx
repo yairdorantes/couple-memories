@@ -1,5 +1,5 @@
 import type mapboxgl from "mapbox-gl";
-import { Crosshair, MapPin, Search } from "lucide-react";
+import { Crosshair, MapPin, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { mapboxAccessToken } from "../config/mapbox";
 import { useI18n } from "../i18n/I18nContext";
@@ -114,6 +114,16 @@ export function LocationPicker({
     );
   }
 
+  function clearLocation() {
+    selectedLocationRef.current = "";
+    onLocationChange("");
+    onLatitudeChange("");
+    onLongitudeChange("");
+    setSuggestions([]);
+    setSearchError("");
+    setIsMapOpen(false);
+  }
+
   return (
     <section className="location-picker">
       <label className="location-picker-search">
@@ -121,7 +131,7 @@ export function LocationPicker({
         <span className="location-picker-input-wrap">
           <Search aria-hidden="true" />
           <input value={location} placeholder={t("locationPicker.searchPlaceholder")} autoComplete="off" onChange={(event) => { selectedLocationRef.current = ""; onLocationChange(event.target.value); }} />
-          {isSearching ? <span className="location-picker-status">{t("locationPicker.searching")}</span> : null}
+          {location ? <button className="location-picker-clear" type="button" onClick={clearLocation} title={t("locationPicker.clear")} aria-label={t("locationPicker.clear")}><X aria-hidden="true" /></button> : isSearching ? <span className="location-picker-status">{t("locationPicker.searching")}</span> : null}
         </span>
       </label>
       {suggestions.length > 0 ? (

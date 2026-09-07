@@ -33,31 +33,37 @@ export function PlacesPage({ activeView, onNavigate, onOpenMemory }: PlacesPageP
   const placesQuery = usePlaces();
   const memoriesQuery = useMemories({ category: "all", search: "" });
   const places = placesQuery.data ?? emptyPlaces;
-  const memories =
-    memoriesQuery.data?.pages.flatMap((page) => page.results) ?? emptyMemories;
+  const memories = useMemo(
+    () => memoriesQuery.data?.pages.flatMap((page) => page.results) ?? emptyMemories,
+    [memoriesQuery.data],
+  );
+  const orderedPlaces = useMemo(
+    () => [...places].sort((firstPlace, secondPlace) => getPlaceLatestMemoryTimestamp(secondPlace, memories) - getPlaceLatestMemoryTimestamp(firstPlace, memories)),
+    [memories, places],
+  );
   const [selectedPlaceId, setSelectedPlaceId] = useState("");
 
   const selectedPlace = useMemo(
     () =>
-      places.find((place) => String(place.id) === selectedPlaceId) ??
-      places[0],
-    [places, selectedPlaceId],
+      orderedPlaces.find((place) => String(place.id) === selectedPlaceId) ??
+      orderedPlaces[0],
+    [orderedPlaces, selectedPlaceId],
   );
 
   useEffect(() => {
-    if (!selectedPlaceId && places[0]) {
-      setSelectedPlaceId(String(places[0].id));
+    if (!selectedPlaceId && orderedPlaces[0]) {
+      setSelectedPlaceId(String(orderedPlaces[0].id));
     }
-  }, [places, selectedPlaceId]);
+  }, [orderedPlaces, selectedPlaceId]);
 
   useEffect(() => {
-    if (!mapContainerRef.current || !mapboxAccessToken || mapRef.current || places.length === 0) {
+    if (!mapContainerRef.current || !mapboxAccessToken || mapRef.current || orderedPlaces.length === 0) {
       return;
     }
 
     mapboxgl.accessToken = mapboxAccessToken;
 
-    const center = getPlacesCenter(places);
+    const center = getPlacesCenter(orderedPlaces);
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/dark-v11",
@@ -74,7 +80,7 @@ export function PlacesPage({ activeView, onNavigate, onOpenMemory }: PlacesPageP
 
     const markers = new Map<string, mapboxgl.Marker>();
 
-    places.forEach((place) => {
+    orderedPlaces.forEach((place) => {
       const markerElement = document.createElement("button");
       markerElement.type = "button";
       markerElement.className = "place-map-marker";
@@ -104,7 +110,7 @@ export function PlacesPage({ activeView, onNavigate, onOpenMemory }: PlacesPageP
       map.remove();
       mapRef.current = null;
     };
-  }, [places]);
+  }, [orderedPlaces]);
 
   useEffect(() => {
     if (!selectedPlace) {
@@ -186,7 +192,7 @@ export function PlacesPage({ activeView, onNavigate, onOpenMemory }: PlacesPageP
           </div>
 
           <div className='places-list' aria-label={t("places.title")}>
-            {places.map((place) => (
+            {orderedPlaces.map((place) => (
               <button
                 key={place.id}
                 className={place.id === selectedPlace?.id ? "is-active" : undefined}
@@ -228,10 +234,7 @@ function PlaceDetail({ place, memories, language, onNavigate, onOpenMemory }: Pl
   const { t } = useI18n();
   const placeMemories = memories
     .filter((memory) => isMemoryLinkedToPlace(memory, place.id))
-    .sort(
-      (firstMemory, secondMemory) =>
-        new Date(secondMemory.happened_at).getTime() - new Date(firstMemory.happened_at).getTime(),
-    );
+    .sort(sortMemoriesNewestFirst);
 
   return (
     <article className='place-detail-card'>
@@ -306,6 +309,20 @@ function getPlaceVisitedDates(place: ApiPlace, memories: ApiMemory[]): string[] 
 
 function isMemoryLinkedToPlace(memory: ApiMemory, placeId: number): boolean {
   return memory.place === placeId || memory.media_links.some((media) => media.place === placeId);
+}
+
+function getPlaceLatestMemoryTimestamp(place: ApiPlace, memories: ApiMemory[]): number {
+  const latestMemoryTimestamp = memories.reduce((latestTimestamp, memory) => {
+    if (!isMemoryLinkedToPlace(memory, place.id)) return latestTimestamp;
+    return Math.max(latestTimestamp, getDateForDisplay(memory.happened_at).getTime());
+  }, 0);
+
+  return latestMemoryTimestamp || getDateForDisplay(place.created_at).getTime();
+}
+
+function sortMemoriesNewestFirst(firstMemory: ApiMemory, secondMemory: ApiMemory): number {
+  const dateDifference = getDateForDisplay(secondMemory.happened_at).getTime() - getDateForDisplay(firstMemory.happened_at).getTime();
+  return dateDifference || secondMemory.id - firstMemory.id;
 }
 
 function formatVisitedDates(dates: string[], language: string): string {

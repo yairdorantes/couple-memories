@@ -1293,14 +1293,24 @@ button:focus-visible {
 .memory-entry-location {
   display: inline-flex;
   min-width: 0;
+  max-width: min(47%, 14rem);
+  flex: 0 1 auto;
+  overflow: hidden;
   align-items: center;
   justify-content: flex-end;
   gap: 0.28rem;
-  color: rgba(255, 242, 248, 0.76);
-  font-size: 0.78rem;
-  font-weight: 900;
+  color: rgba(255, 242, 248, 0.68);
+  font-size: 0.7rem;
+  font-weight: 800;
   line-height: 1;
   text-align: right;
+}
+
+.memory-entry-location > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .memory-entry-location svg {
@@ -3182,6 +3192,7 @@ button.intimacy-stat-card {
   background: rgba(255, 242, 248, 0.03);
   padding: 0.92rem 0.95rem;
   padding-left: 2.65rem;
+  padding-right: 2.65rem;
   font: inherit;
   font-weight: 750;
 }
@@ -3191,6 +3202,30 @@ button.intimacy-stat-card {
   right: 0.8rem;
   color: rgba(255, 242, 248, 0.66);
   font-size: 0.72rem;
+}
+
+.location-picker-clear {
+  position: absolute;
+  right: 0.45rem;
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 0;
+  border-radius: 0.5rem;
+  color: rgba(255, 242, 248, 0.68);
+  background: transparent;
+}
+
+.location-picker-clear:hover,
+.location-picker-clear:focus-visible {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.location-picker-clear svg {
+  width: 1rem;
+  height: 1rem;
 }
 
 .location-picker-results {
@@ -4212,7 +4247,7 @@ button.intimacy-stat-card {
   }
 
   .memory-entry-location {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
   }
 
   .memories-category-strip {

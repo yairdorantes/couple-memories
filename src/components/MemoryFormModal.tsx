@@ -56,7 +56,8 @@ export function MemoryFormModal({
   const isEditing = Boolean(initialMemory);
   const [title, setTitle] = useState("");
   const [caption, setCaption] = useState("");
-  const [location, setLocation] = useState("");
+  const [placeName, setPlaceName] = useState("");
+  const [mapboxLocation, setMapboxLocation] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [categoryId, setCategoryId] =
@@ -81,7 +82,8 @@ export function MemoryFormModal({
     if (initialMemory) {
       setTitle(initialMemory.title);
       setCaption(initialMemory.caption);
-      setLocation(initialMemory.location);
+      setPlaceName(initialMemory.location);
+      setMapboxLocation("");
       setLatitude(formatCoordinateInput(initialMemory.latitude));
       setLongitude(formatCoordinateInput(initialMemory.longitude));
       setCategoryId(initialMemory.categoryId);
@@ -99,7 +101,8 @@ export function MemoryFormModal({
 
     setTitle("");
     setCaption("");
-    setLocation("");
+    setPlaceName("");
+    setMapboxLocation("");
     setLatitude("");
     setLongitude("");
     setCategoryId("travel");
@@ -168,7 +171,8 @@ export function MemoryFormModal({
 
     const trimmedTitle = title.trim();
     const trimmedCaption = caption.trim();
-    const trimmedLocation = location.trim();
+    const trimmedPlaceName = placeName.trim();
+    const trimmedMapboxLocation = mapboxLocation.trim();
     const coordinates = parseCoordinates(latitude, longitude);
 
     if (coordinates.error) {
@@ -181,7 +185,7 @@ export function MemoryFormModal({
     onSave({
       title: trimmedTitle,
       caption: trimmedCaption,
-      location: trimmedLocation,
+      location: trimmedPlaceName || trimmedMapboxLocation,
       latitude: coordinates.latitude,
       longitude: coordinates.longitude,
       categoryId,
@@ -201,7 +205,8 @@ export function MemoryFormModal({
 
     setTitle("");
     setCaption("");
-    setLocation("");
+    setPlaceName("");
+    setMapboxLocation("");
     setLatitude("");
     setLongitude("");
     setCategoryId("travel");
@@ -255,7 +260,23 @@ export function MemoryFormModal({
           />
         </label>
 
-        <LocationPicker location={location} latitude={latitude} longitude={longitude} onLocationChange={setLocation} onLatitudeChange={setLatitude} onLongitudeChange={setLongitude} />
+        <label className='memory-modal-field'>
+          <span>{t("memoryForm.placeLabel")}</span>
+          <input
+            value={placeName}
+            placeholder={t("memoryForm.placePlaceholder")}
+            onChange={(event) => setPlaceName(event.target.value)}
+          />
+        </label>
+
+        <LocationPicker
+          location={mapboxLocation}
+          latitude={latitude}
+          longitude={longitude}
+          onLocationChange={setMapboxLocation}
+          onLatitudeChange={setLatitude}
+          onLongitudeChange={setLongitude}
+        />
         {coordinatesError ? <small className='memory-modal-error'>{coordinatesError}</small> : null}
 
         <div className='memory-modal-photo-field'>

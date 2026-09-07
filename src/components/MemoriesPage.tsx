@@ -327,9 +327,9 @@ export function MemoriesPage({ activeView, onNavigate, onOpenMemory }: MemoriesP
             <span className='memory-entry-tag'>
               {t(memory.categoryLabelKey)}
             </span>
-            <span className='memory-entry-location'>
+            <span className='memory-entry-location' title={memory.location}>
               <MapPin className='h-4 w-4' aria-hidden='true' />
-              {memory.location}
+              <span>{memory.location}</span>
             </span>
           </div>
         </div>
