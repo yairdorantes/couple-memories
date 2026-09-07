@@ -7,6 +7,7 @@ import {
 } from "../data/memoriesContent";
 import { useI18n } from "../i18n/I18nContext";
 import { ImageCropControls } from "./ImageCropControls";
+import { LocationPicker } from "./LocationPicker";
 import { PositionedImage } from "./PositionedImage";
 import { defaultImageCrop, type ImageCrop } from "../utils/imageCrop";
 import { toLocalDateTimeInputValue } from "../utils/dateTime";
@@ -178,9 +179,9 @@ export function MemoryFormModal({
     setCoordinatesError("");
 
     onSave({
-      title: trimmedTitle || "Nuevo recuerdo",
-      caption: trimmedCaption || "Un momento para guardar.",
-      location: trimmedLocation || "Lugar especial",
+      title: trimmedTitle,
+      caption: trimmedCaption,
+      location: trimmedLocation,
       latitude: coordinates.latitude,
       longitude: coordinates.longitude,
       categoryId,
@@ -238,6 +239,7 @@ export function MemoryFormModal({
         <label className='memory-modal-field'>
           <span>{t("memoryForm.titleLabel")}</span>
           <input
+            required
             value={title}
             placeholder={t("memoryForm.titlePlaceholder")}
             onChange={(event) => setTitle(event.target.value)}
@@ -253,50 +255,8 @@ export function MemoryFormModal({
           />
         </label>
 
-        <label className='memory-modal-field'>
-          <span>{t("memoryForm.locationLabel")}</span>
-          <input
-            value={location}
-            placeholder={t("memoryForm.locationPlaceholder")}
-            onChange={(event) => setLocation(event.target.value)}
-          />
-        </label>
-
-        <fieldset className='memory-modal-field memory-modal-coordinates'>
-          <legend>{t("memoryForm.coordinatesLabel")}</legend>
-          <div>
-            <label>
-              <span>{t("memoryForm.latitudeLabel")}</span>
-              <input
-                type='number'
-                inputMode='decimal'
-                min='-90'
-                max='90'
-                step='0.000001'
-                value={latitude}
-                placeholder='19.043300'
-                onChange={(event) => setLatitude(event.target.value)}
-              />
-            </label>
-            <label>
-              <span>{t("memoryForm.longitudeLabel")}</span>
-              <input
-                type='number'
-                inputMode='decimal'
-                min='-180'
-                max='180'
-                step='0.000001'
-                value={longitude}
-                placeholder='-98.201900'
-                onChange={(event) => setLongitude(event.target.value)}
-              />
-            </label>
-          </div>
-          <small>{t("memoryForm.coordinatesHint")}</small>
-          {coordinatesError ? (
-            <small className='memory-modal-error'>{coordinatesError}</small>
-          ) : null}
-        </fieldset>
+        <LocationPicker location={location} latitude={latitude} longitude={longitude} onLocationChange={setLocation} onLatitudeChange={setLatitude} onLongitudeChange={setLongitude} />
+        {coordinatesError ? <small className='memory-modal-error'>{coordinatesError}</small> : null}
 
         <div className='memory-modal-photo-field'>
           <span>{t("memoryForm.photoLabel")}</span>

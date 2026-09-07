@@ -3145,6 +3145,187 @@ button.intimacy-stat-card {
   line-height: 1.35;
 }
 
+.location-picker {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.85rem;
+}
+
+.location-picker-search {
+  display: grid;
+  gap: 0.42rem;
+  color: white;
+  font-size: 0.92rem;
+  font-weight: 900;
+}
+
+.location-picker-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.location-picker-input-wrap > svg {
+  position: absolute;
+  left: 0.9rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  color: #f2a1bb;
+  pointer-events: none;
+}
+
+.location-picker-input-wrap input {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.72rem;
+  color: white;
+  background: rgba(255, 242, 248, 0.03);
+  padding: 0.92rem 0.95rem;
+  padding-left: 2.65rem;
+  font: inherit;
+  font-weight: 750;
+}
+
+.location-picker-status {
+  position: absolute;
+  right: 0.8rem;
+  color: rgba(255, 242, 248, 0.66);
+  font-size: 0.72rem;
+}
+
+.location-picker-results {
+  display: grid;
+  max-height: 13rem;
+  margin: 0;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 188, 221, 0.16);
+  border-radius: 0.72rem;
+  background: rgba(7, 6, 10, 0.72);
+  padding: 0.3rem;
+  list-style: none;
+}
+
+.location-picker-results button {
+  display: grid;
+  width: 100%;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.55rem;
+  align-items: start;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  padding: 0.62rem;
+  color: rgba(255, 242, 248, 0.9);
+  text-align: left;
+}
+
+.location-picker-results button:hover,
+.location-picker-results button:focus-visible {
+  background: rgba(237, 147, 177, 0.13);
+}
+
+.location-picker-results svg,
+.location-picker-actions svg {
+  width: 1rem;
+  height: 1rem;
+  color: #f2a1bb;
+}
+
+.location-picker-results span {
+  min-width: 0;
+  font-size: 0.82rem;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.location-picker-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.48rem;
+}
+
+.location-picker-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid rgba(255, 188, 221, 0.2);
+  border-radius: 0.65rem;
+  background: rgba(255, 242, 248, 0.05);
+  padding: 0.55rem 0.65rem;
+  color: rgba(255, 242, 248, 0.9);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.location-picker-message {
+  margin: 0;
+  color: rgba(215, 198, 207, 0.72);
+  font-size: 0.76rem;
+  font-weight: 750;
+}
+
+.location-picker-message--error {
+  color: #ff9db8;
+}
+
+.location-picker-map {
+  height: 13rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 188, 221, 0.2);
+  border-radius: 0.8rem;
+}
+
+.location-picker-map .mapboxgl-ctrl-bottom-right {
+  display: none;
+}
+
+.location-picker-advanced {
+  border-top: 1px solid rgba(255, 188, 221, 0.13);
+  padding-top: 0.65rem;
+}
+
+.location-picker-advanced summary {
+  cursor: pointer;
+  color: rgba(255, 242, 248, 0.76);
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.location-picker-advanced > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.62rem;
+  margin-top: 0.62rem;
+}
+
+.location-picker-advanced label {
+  display: grid;
+  min-width: 0;
+  gap: 0.32rem;
+  color: rgba(255, 242, 248, 0.76);
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.location-picker-advanced input {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.72rem;
+  color: white;
+  background: rgba(255, 242, 248, 0.03);
+  padding: 0.92rem 0.95rem;
+  font: inherit;
+  font-weight: 750;
+}
+
+.location-picker-advanced small {
+  display: block;
+  margin-top: 0.35rem;
+  color: rgba(215, 198, 207, 0.68);
+  font-size: 0.74rem;
+  font-weight: 750;
+}
+
 .memory-modal-photo-picker {
   display: grid;
   min-height: 9rem;
@@ -3403,6 +3584,10 @@ button.intimacy-stat-card {
 }
 
 .toast {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0.7rem;
   border: 1px solid rgba(255, 188, 221, 0.22);
   border-radius: 0.95rem;
   color: white;
@@ -3414,6 +3599,34 @@ button.intimacy-stat-card {
   font-size: 0.86rem;
   font-weight: 850;
   backdrop-filter: blur(18px);
+}
+
+.toast > span {
+  min-width: 0;
+  line-height: 1.35;
+}
+
+.toast > button {
+  display: grid;
+  width: 1.8rem;
+  height: 1.8rem;
+  margin: -0.25rem -0.35rem -0.25rem 0;
+  place-items: center;
+  border: 0;
+  border-radius: 0.45rem;
+  color: rgba(255, 255, 255, 0.76);
+  background: transparent;
+}
+
+.toast > button:hover,
+.toast > button:focus-visible {
+  color: white;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.toast > button svg {
+  width: 1rem;
+  height: 1rem;
 }
 
 .toast--success {

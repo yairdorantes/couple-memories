@@ -337,7 +337,15 @@ export function IntimacyPage({ activeView, onNavigate }: IntimacyPageProps) {
                         selectedDate === day.key ? "is-selected" : "",
                       ].join(" ")}
                       type='button'
-                      onClick={() => setSelectedDate(day.count > 0 ? day.key : null)}
+                      onClick={() => {
+                        if (day.count === 0) {
+                          setSelectedDate(null);
+                          return;
+                        }
+
+                        setSelectedDate(day.key);
+                        setFilter("all");
+                      }}
                     >
                       <span>{day.date.getDate()}</span>
                       {day.count > 0 ? <i>{day.count}</i> : null}
@@ -567,11 +575,11 @@ function IntimacyFormModal({ entry, isOpen, isSaving, onClose, onSave }: Intimac
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     onSave({
-      title: title.trim() || t("intimacy.form.defaultTitle"),
+      title: title.trim(),
       happenedAt,
-      place: place.trim() || t("intimacy.form.defaultPlace"),
+      place: place.trim(),
       mood,
-      note: note.trim() || t("intimacy.form.defaultNote"),
+      note: note.trim(),
       isFavorite,
     });
   }
@@ -596,7 +604,7 @@ function IntimacyFormModal({ entry, isOpen, isSaving, onClose, onSave }: Intimac
 
         <label className='memory-modal-field'>
           <span>{t("intimacy.form.titleLabel")}</span>
-          <input value={title} placeholder={t("intimacy.form.titlePlaceholder")} onChange={(event) => setTitle(event.target.value)} />
+          <input required value={title} placeholder={t("intimacy.form.titlePlaceholder")} onChange={(event) => setTitle(event.target.value)} />
         </label>
 
         <label className='memory-modal-field'>

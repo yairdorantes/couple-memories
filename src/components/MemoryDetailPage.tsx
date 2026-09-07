@@ -19,6 +19,7 @@ import { useI18n } from "../i18n/I18nContext";
 import { getDateForDisplay, toIsoStringFromLocalInput, toLocalDateTimeInputValue } from "../utils/dateTime";
 import { FloatingHearts } from "./FloatingHearts";
 import { PositionedImage } from "./PositionedImage";
+import { LocationPicker } from "./LocationPicker";
 import { useToast } from "./ui/toastContext";
 
 type MemoryDetailPageProps = {
@@ -649,28 +650,7 @@ function PhotoLocationFields({
   onLatitudeChange,
   onLongitudeChange,
 }: PhotoLocationFieldsProps) {
-  const { t } = useI18n();
-
   return (
-    <>
-      <label>
-        <span>{t("memoryDetail.locationLabel")}</span>
-        <input value={location} onChange={(event) => onLocationChange(event.target.value)} placeholder={t("memoryDetail.locationPlaceholder")} />
-      </label>
-      <fieldset className="memory-photo-dialog-coordinates">
-        <legend>{t("memoryForm.coordinatesLabel")}</legend>
-        <div>
-          <label>
-            <span>{t("memoryDetail.latitudeLabel")}</span>
-            <input type="number" inputMode="decimal" min="-90" max="90" step="0.000001" value={latitude} placeholder="19.043300" onChange={(event) => onLatitudeChange(event.target.value)} />
-          </label>
-          <label>
-            <span>{t("memoryDetail.longitudeLabel")}</span>
-            <input type="number" inputMode="decimal" min="-180" max="180" step="0.000001" value={longitude} placeholder="-98.201900" onChange={(event) => onLongitudeChange(event.target.value)} />
-          </label>
-        </div>
-        <small>{t("memoryDetail.coordinatesHint")}</small>
-      </fieldset>
-    </>
+    <LocationPicker location={location} latitude={latitude} longitude={longitude} onLocationChange={onLocationChange} onLatitudeChange={onLatitudeChange} onLongitudeChange={onLongitudeChange} />
   );
 }

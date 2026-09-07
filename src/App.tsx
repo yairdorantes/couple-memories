@@ -5,6 +5,7 @@ import { MemoryDetailPage } from './components/MemoryDetailPage';
 import { MemoriesPage } from './components/MemoriesPage';
 import { ProfilePage } from './components/ProfilePage';
 import { I18nProvider } from './i18n/I18nProvider';
+import { ToastProvider } from './components/ui/ToastProvider';
 import type { AppView } from './data/homeContent';
 
 const PlacesPage = lazy(() =>
@@ -46,6 +47,7 @@ export function App() {
 
   return (
     <I18nProvider>
+      <ToastProvider>
       {route.memoryId ? (
         <MemoryDetailPage memoryId={route.memoryId} onBack={() => navigateToView('memories')} />
       ) : activeView === 'memories' ? (
@@ -53,7 +55,7 @@ export function App() {
       ) : activeView === 'intimacy' ? (
         <IntimacyPage activeView={activeView} onNavigate={navigateToView} />
       ) : activeView === 'places' ? (
-        <Suspense fallback={<HomePage activeView={activeView} onNavigate={navigateToView} />}>
+        <Suspense fallback={<HomePage activeView={activeView} onNavigate={navigateToView} onOpenMemory={navigateToMemory} />}>
           <PlacesPage
             activeView={activeView}
             onNavigate={navigateToView}
@@ -63,8 +65,9 @@ export function App() {
       ) : activeView === 'profile' ? (
         <ProfilePage activeView={activeView} onNavigate={navigateToView} />
       ) : (
-        <HomePage activeView={activeView} onNavigate={navigateToView} />
+        <HomePage activeView={activeView} onNavigate={navigateToView} onOpenMemory={navigateToMemory} />
       )}
+      </ToastProvider>
     </I18nProvider>
   );
 }

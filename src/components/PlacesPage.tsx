@@ -226,7 +226,12 @@ type PlaceDetailProps = {
 
 function PlaceDetail({ place, memories, language, onNavigate, onOpenMemory }: PlaceDetailProps) {
   const { t } = useI18n();
-  const placeMemories = memories.filter((memory) => isMemoryLinkedToPlace(memory, place.id));
+  const placeMemories = memories
+    .filter((memory) => isMemoryLinkedToPlace(memory, place.id))
+    .sort(
+      (firstMemory, secondMemory) =>
+        new Date(secondMemory.happened_at).getTime() - new Date(firstMemory.happened_at).getTime(),
+    );
 
   return (
     <article className='place-detail-card'>

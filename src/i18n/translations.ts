@@ -207,6 +207,19 @@ export type TranslationKey =
   | "memoryForm.cancel"
   | "memoryForm.save"
   | "memoryForm.update"
+  | "toast.dismiss"
+  | "locationPicker.searchLabel"
+  | "locationPicker.searchPlaceholder"
+  | "locationPicker.searching"
+  | "locationPicker.noResults"
+  | "locationPicker.currentLocation"
+  | "locationPicker.locating"
+  | "locationPicker.adjustOnMap"
+  | "locationPicker.hideMap"
+  | "locationPicker.advancedCoordinates"
+  | "locationPicker.noToken"
+  | "locationPicker.searchError"
+  | "locationPicker.locationUnavailable"
   | "memoryDetail.back"
   | "memoryDetail.photoCount"
   | "memoryDetail.collectionEyebrow"
@@ -282,7 +295,7 @@ export const translations: Record<Language, TranslationCatalog> = {
     "featured.caption.cholula": "The afternoon we kept walking after sunset",
     "featured.daysTogether": (days) =>
       `${formatUnit("en", days, "day")} together`,
-    "featured.viewMore": "View more",
+    "featured.viewMore": "Go to memory",
     "featured.loading": "Finding a memory...",
     "featured.emptyTitle": "No memories yet",
     "featured.emptyCaption": "Save your first memory and it will appear here.",
@@ -481,6 +494,19 @@ export const translations: Record<Language, TranslationCatalog> = {
     "memoryForm.cancel": "Cancel",
     "memoryForm.save": "Save Memory",
     "memoryForm.update": "Update Memory",
+    "toast.dismiss": "Dismiss notification",
+    "locationPicker.searchLabel": "Find a location",
+    "locationPicker.searchPlaceholder": "Search a place or address",
+    "locationPicker.searching": "Searching",
+    "locationPicker.noResults": "No matching places found.",
+    "locationPicker.currentLocation": "Use current location",
+    "locationPicker.locating": "Getting location",
+    "locationPicker.adjustOnMap": "Adjust pin on map",
+    "locationPicker.hideMap": "Hide map",
+    "locationPicker.advancedCoordinates": "Enter coordinates manually",
+    "locationPicker.noToken": "Map search is unavailable until a Mapbox token is configured.",
+    "locationPicker.searchError": "Could not search locations. Try again.",
+    "locationPicker.locationUnavailable": "Your current location is unavailable. Check your browser permission.",
     "memoryDetail.back": "Memories",
     "memoryDetail.photoCount": (count) => `${count} photo${Number(count) === 1 ? "" : "s"}`,
     "memoryDetail.collectionEyebrow": "Photo collection",
@@ -547,7 +573,7 @@ export const translations: Record<Language, TranslationCatalog> = {
       "La tarde en que seguimos caminando después del atardecer",
     "featured.daysTogether": (days) =>
       `${formatUnit("es", days, "day")} juntos`,
-    "featured.viewMore": "Ver más",
+    "featured.viewMore": "Ir al recuerdo",
     "featured.loading": "Buscando un recuerdo...",
     "featured.emptyTitle": "Aun no hay recuerdos",
     "featured.emptyCaption": "Guarda el primer recuerdo y aparecera aqui.",
@@ -748,6 +774,19 @@ export const translations: Record<Language, TranslationCatalog> = {
     "memoryForm.cancel": "Cancelar",
     "memoryForm.save": "Guardar recuerdo",
     "memoryForm.update": "Actualizar recuerdo",
+    "toast.dismiss": "Cerrar notificacion",
+    "locationPicker.searchLabel": "Buscar un lugar",
+    "locationPicker.searchPlaceholder": "Busca un lugar o direccion",
+    "locationPicker.searching": "Buscando",
+    "locationPicker.noResults": "No se encontraron lugares.",
+    "locationPicker.currentLocation": "Usar mi ubicacion",
+    "locationPicker.locating": "Obteniendo ubicacion",
+    "locationPicker.adjustOnMap": "Ajustar pin en el mapa",
+    "locationPicker.hideMap": "Ocultar mapa",
+    "locationPicker.advancedCoordinates": "Ingresar coordenadas manualmente",
+    "locationPicker.noToken": "La busqueda de mapas no esta disponible hasta configurar un token de Mapbox.",
+    "locationPicker.searchError": "No se pudieron buscar lugares. Intenta de nuevo.",
+    "locationPicker.locationUnavailable": "Tu ubicacion actual no esta disponible. Revisa el permiso del navegador.",
     "memoryDetail.back": "Recuerdos",
     "memoryDetail.photoCount": (count) => `${count} foto${Number(count) === 1 ? "" : "s"}`,
     "memoryDetail.collectionEyebrow": "Coleccion de fotos",

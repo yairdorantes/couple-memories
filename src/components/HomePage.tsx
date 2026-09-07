@@ -35,6 +35,7 @@ import type { CSSProperties } from "react";
 type HomePageProps = {
   activeView: AppView;
   onNavigate: (view: AppView) => void;
+  onOpenMemory: (memoryId: string) => void;
 };
 
 function useRelationshipDuration(startDate: string) {
@@ -48,7 +49,7 @@ function useRelationshipDuration(startDate: string) {
   return getRelationshipDuration(startDate, now);
 }
 
-export function HomePage({ activeView, onNavigate }: HomePageProps) {
+export function HomePage({ activeView, onNavigate, onOpenMemory }: HomePageProps) {
   const duration = useRelationshipDuration(relationshipConfig.startDate);
   const { language } = useI18n();
   const [randomHeroImage, setRandomHeroImage] =
@@ -186,7 +187,7 @@ export function HomePage({ activeView, onNavigate }: HomePageProps) {
           <FeaturedMemoryCard
             memories={featuredMemories}
             isLoading={featuredMemoriesQuery.isLoading}
-            onViewMemory={() => onNavigate("memories")}
+            onViewMemory={onOpenMemory}
           />
           <TogetherCounter duration={duration} />
           <MemoryHighlights highlights={homeHighlights} />
