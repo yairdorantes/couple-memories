@@ -238,10 +238,14 @@ function getCoordinates(latitude: string, longitude: string): Coordinates | unde
 }
 
 function setCoordinateValues(coordinates: Coordinates | GeolocationCoordinates, onLatitudeChange: (value: string) => void, onLongitudeChange: (value: string) => void) {
-  onLatitudeChange(String(coordinates.latitude));
-  onLongitudeChange(String(coordinates.longitude));
+  onLatitudeChange(formatCoordinate(coordinates.latitude));
+  onLongitudeChange(formatCoordinate(coordinates.longitude));
 }
 
 function toCoordinates(lngLat: mapboxgl.LngLat): Coordinates {
   return { latitude: lngLat.lat, longitude: lngLat.lng };
+}
+
+function formatCoordinate(value: number): string {
+  return value.toFixed(6);
 }
